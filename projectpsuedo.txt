@@ -1,0 +1,43 @@
+MinCashFlow(debts)
+// input: array of all debts
+// output: prints who should pay who how much
+// determines how much each person owes and is owed, then determines how much 
+// debt cancels out and who should pay who how much 
+for i <- 0 to debts.length
+    // totalDebts maintains a list of each debtor and creditor and how much debit and credit they have
+    totalDebts[debts[i].debtor].debt = totalDebts[debts[i].debtor].debt + debts[i].debt
+    totalDebts[debts[i].creditor].credit = totalDebts[debts[i].creditor].credit + debts[i].debt
+
+for i <- 0 to totalDebts.length 
+    // cancels out each persons debt and credit with themselves
+    if totalDebts[i].credit < totalDebts[i].debt
+        totalDebts[i].debt = totalDebts[i].debt - totalDebts[i].credit
+        totalDebts[i].credit = 0
+    else if totalDebts[i].debt <= totalDebts[i].credit
+        totalDebts[i].credit = totalDebts[i].credit - totalDebts[i].debt
+        totalDebts[i].debt = 0
+
+sort(totalDebts)       // sort by amount of credit each person has given out
+
+j <- 0
+for i <- totalDebts.length - 1 to 0 
+    while totalDebts[i].credit != 0
+        if totalDebts[j].debt < totalDebts[i].credit
+            print(totalDebts[j].name + " will pay " + totalDebts[i].name + " $" + totalDebts[j].debt) 
+            totalDebts[i].credit = totalDebts[i].credit - totalDebts[j].debt
+            totalDebts[j].debt = 0
+        else if totalDebts[j].debt >= totalDebts[i].credit
+            print(totalDebts[j].name + " will pay " + totalDebts[i].name + " $" + totalDebts[i].credit)  
+            totalDebts[j].debt = totalDebts[j].debt - totalDebts[i].credit
+            totalDebts[i].credit = 0
+    j++
+
+
+
+
+Notes: 
+    We will have to determine the best way to store totalDebts in a custom data structure.  In this 
+    design, each person will have a total number of credit and debt stored in the same object. 
+    
+    The initial debts will store a debtor, a creditor, and an amount owed, which we can convert into 
+    the totals for each person. 
