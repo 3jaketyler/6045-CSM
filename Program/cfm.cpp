@@ -9,6 +9,7 @@ using namespace std;
 
 void welcomeMsg();                          // prints welcome message
 vector<Person> readData(string filename);   // get data from file
+void settleDebts(vector<Person> people);                   // calculates who should pay who
 
 int main() {
     
@@ -16,15 +17,13 @@ int main() {
     welcomeMsg();
 
     string filename;
-    cout << "Enter the name of your data file: ";
+    cout << "\nEnter the name of your data file: ";
     cin >> filename;
 
     vector<Person> people;
     while (people.empty) {      // prompts user for data 
         people = readData(filename);
     } 
-
-    
 
     cout << "Calculating who should pay whom..." << endl;
     settleDebts(debts, people);
@@ -91,6 +90,25 @@ vector<Person> readData(string filename) {      // reads data from file
             people[cIndex].addCredit(debt);
         }
     }
+}
 
+void settleDebts(vector<Person> people) {
+    // cancels out each persons debt and credit with themselves
+    cout << "\nCancelling out everyone's debt and credit:\n";
+    int s = people.size();
+    for (int i = 0; i < s; i++) {
+        if (people[i].getCredit() < people[i].getDebt()) {
+            people[i].subDebt(people[i].getCredit());
+            cout << people[i].getName() << "'s credit cancels out. They will not get paid. They still owe $" << people[i].getDebt() << ".\n";
+        } else if (people[i].getDebt() < people[i].getCredit()) {
+            people[i].subCredit(people[i].getDebt());
+            cout << people[i].getName() << "'s debt cancels out. They will not pay anyone. They still are owed $" << people[i].getCredit() << ".\n";
+        } else {
+            cout << people[i].getName() << "'s debt and credit cancels out. They will not pay anyone or get paid\n";
+            people.erase(people.begin() + i);
+        }
+    }
+
+    // iterating through list to determine who will pay who
     
 }
