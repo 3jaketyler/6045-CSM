@@ -1,7 +1,4 @@
-#include <string>
 #include "person.h"
-
-using namespace std;
 
 // Default constructor
 Person::Person() : name(""), debt(0.0), credit(0.0) {}
@@ -12,7 +9,7 @@ Person::Person(std::string name) : name(name), debt(0.0), credit(0.0) {}
 // Constructor with name, debt, and credit parameters
 Person::Person(std::string name, double debt, double credit) : name(name), debt(debt), credit(credit) {}
 
-// Getters (updated to be const)
+// Getters
 std::string Person::getName() const {
     return name;
 }
@@ -36,4 +33,21 @@ void Person::setDebt(double debt) {
 
 void Person::setCredit(double credit) {
     this->credit = credit;
+}
+
+// Modifiers
+void Person::addDebt(double d) {
+    debt += d;  // Add the debt amount
+}
+
+void Person::subDebt(double d) {
+    debt -= d;  // Subtract the debt amount
+}
+
+void Person::addCredit(double c) {
+    credit += c;  // Add the credit amount
+}
+
+void Person::subCredit(double c) {
+    credit -= c;  // Subtract the credit amount
 }
