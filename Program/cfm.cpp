@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <limits>
 #include "person.h"
 #include "searchNSort.h"
 
@@ -21,12 +22,12 @@ int main() {
     cin >> filename;
 
     vector<Person> people;
-    while (people.empty) {      // prompts user for data 
+    while (people.empty()) {      // prompts user for data 
         people = readData(filename);
     } 
 
     cout << "Calculating who should pay whom..." << endl;
-    settleDebts(debts, people);
+    settleDebts(people);
 
     return 0;
 }
@@ -36,7 +37,7 @@ void welcomeMsg() {     // welcome message
          << "+                                                  +\n"
          << "+        Welcome to the Cash Flow Minimizer        +\n"
          << "+                                                  +\n"
-         << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n" 
+         << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 }
 
 vector<Person> readData(string filename) {      // reads data from file
@@ -44,17 +45,17 @@ vector<Person> readData(string filename) {      // reads data from file
 
     ifstream f(filename);     // opens file
 
-    if (!f.is_open) {   // error checking, returns empty vector if no data
+    if (!f.is_open()) {   // error checking, returns empty vector if no data
         cout << "There was an error opening the file. Please try again\n";
         return people;
     }
 
     int numPeople, numDebts;
     f >> numPeople >> numDebts;
-    if (file.fail()) {          // error checking
+    if (f.fail()) {          // error checking
         cout << "Invalid input format on line 1. Please try again.\n";
-        file.clear();               // Clear the error flags
-        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        f.clear();               // Clear the error flags
+        f.ignore(numeric_limits<streamsize>::max(), '\n');
         people.clear();
         people.resize(0);
         return people;
@@ -64,10 +65,10 @@ vector<Person> readData(string filename) {      // reads data from file
         string debtor, creditor;            // stores names of debtor and creditor
         double debt;                        // amount of debt
         f >> debt >> debtor >> creditor;    // extracts information
-        if (file.fail()) {          // error checking
+        if (f.fail()) {          // error checking
             cout << "Invalid input format on line " << i + 2 << ". Please try again.\n";
-            file.clear();               // Clear the error flags
-            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            f.clear();               // Clear the error flags
+            f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             people.clear();
             people.resize(0);
             return people;

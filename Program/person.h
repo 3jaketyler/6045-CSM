@@ -6,17 +6,17 @@ class Person {
     public:
         // constructors
         Person();                                           // constructor
-        Person(string name);                                // constructor with name parameter
-        Person(string name, double debt, double credit);    // constructor with name, debt, and credit parameter
+        Person(std::string name);                                // constructor with name parameter
+        Person(std::string name, double debt, double credit);    // constructor with name, debt, and credit parameter
 
 
         // getters
-        string getName();      // returns name
+        std::string getName();      // returns name
         double getDebt();      // returns debt
         double getCredit();    // returns credit
 
         // setters 
-        void setName(string name);      // sets name
+        void setName(std::string name);      // sets name
         void setDebt(double debt);      // sets debt
         void setCredit(double credit);  // sets credit
 
@@ -27,7 +27,7 @@ class Person {
         void subCredit(double c);   // subtracts d from credit
 
     private:
-        string name;        // name of person
+        std::string name;        // name of person
         double debt;        // amount owed
         double credit;      // amount owed to them
-}
+};
