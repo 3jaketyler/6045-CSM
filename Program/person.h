@@ -1,33 +1,37 @@
+#ifndef PERSON_H    // If PERSON_H is not defined...
+#define PERSON_H    // Define PERSON_H
+
 #include <string>
 
 using namespace std;
 
 class Person {
-    public:
-        // constructors
-        Person();                                           // constructor
-        Person(std::string name);                                // constructor with name parameter
-        Person(std::string name, double debt, double credit);    // constructor with name, debt, and credit parameter
+public:
+    // Constructors
+    Person();
+    Person(std::string name);
+    Person(std::string name, double debt, double credit);
 
+    // Getters (marked as const)
+    std::string getName() const;  // returns name
+    double getDebt() const;       // returns debt
+    double getCredit() const;     // returns credit
 
-        // getters
-        std::string getName();      // returns name
-        double getDebt();      // returns debt
-        double getCredit();    // returns credit
+    // Setters
+    void setName(std::string name);
+    void setDebt(double debt);
+    void setCredit(double credit);
 
-        // setters 
-        void setName(std::string name);      // sets name
-        void setDebt(double debt);      // sets debt
-        void setCredit(double credit);  // sets credit
+    // Modifiers
+    void addDebt(double d);
+    void subDebt(double d);
+    void addCredit(double c);
+    void subCredit(double c);
 
-        // modifiers 
-        void addDebt(double d);     // adds d to debt
-        void subDebt(double d);     // subtracts d from debt
-        void addCredit(double c);   // adds d to credit
-        void subCredit(double c);   // subtracts d from credit
-
-    private:
-        std::string name;        // name of person
-        double debt;        // amount owed
-        double credit;      // amount owed to them
+private:
+    std::string name;   // name of person
+    double debt;        // amount owed
+    double credit;      // amount owed to them
 };
+
+#endif  // End of include guard
