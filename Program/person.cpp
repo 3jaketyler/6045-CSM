@@ -3,79 +3,37 @@
 
 using namespace std;
 
-// constructors
-// constructor
-Person::Person() {
-    
-}   
+// Default constructor
+Person::Person() : name(""), debt(0.0), credit(0.0) {}
 
-// constructor with name parameter
-Person::Person(std::string name) {
-    setName(name);
-}   
+// Constructor with name parameter
+Person::Person(std::string name) : name(name), debt(0.0), credit(0.0) {}
 
-// constructor with name and debt parameter
-Person::Person(std::string name, double debt, double credit) {
-    setName(name);
-    setDebt(debt);
-    setCredit(credit);
-}   
+// Constructor with name, debt, and credit parameters
+Person::Person(std::string name, double debt, double credit) : name(name), debt(debt), credit(credit) {}
 
-
-
-// getters
-// returns name
-string Person::getName() {
+// Getters (updated to be const)
+std::string Person::getName() const {
     return name;
-}  
-
-// returns debt
-double Person::getDebt() {
-    return debt;
-} 
-
-// returns credit     
-double Person::getCredit() {
-    return credit;
-}    
-
-
-
-// setters 
-// sets name
-void Person::setName(string name) {
-    name = name;
-}  
-
-// sets debt
-void Person::setDebt(double debt) {
-    debt = debt;
-} 
-
-// sets credit
-void Person::setCredit(double credit) {
-    credit = credit;
-}  
-
-
-
-// modifiers 
-// adds d to debt
-void Person::addDebt(double d) {
-    debt = debt + d;
-} 
-
-// subtracts d from debt
-void Person::subDebt(double d) {
-    debt = debt - d;
-} 
-
-// adds d to credit
-void Person::addCredit(double c) {
-    credit = credit + c;
 }
 
-// subtracts d from credit   
-void Person::subCredit(double c) {
-    credit = credit - c;
-}   
+double Person::getDebt() const {
+    return debt;
+}
+
+double Person::getCredit() const {
+    return credit;
+}
+
+// Setters
+void Person::setName(std::string name) {
+    this->name = name;
+}
+
+void Person::setDebt(double debt) {
+    this->debt = debt;
+}
+
+void Person::setCredit(double credit) {
+    this->credit = credit;
+}
