@@ -44,6 +44,7 @@ int main() {
     mergeSortByCredit(people, 0, people.size() - 1);
 
     settleDebts(people);
+    printPeople(people);
 
     return 0;
 }
@@ -125,10 +126,12 @@ void settleDebts(vector<Person>& people) {
         size_t idx = i - 1;  // Correct index when using size_t in reverse loop
         if (people[idx].getCredit() < people[idx].getDebt()) {
             people[idx].subDebt(people[idx].getCredit());
+            people[idx].setCredit(0);
             cout << people[idx].getName() << "'s credit cancels out. They will not get paid. They still owe $" << people[idx].getDebt() << ".\n";
         }
         else if (people[idx].getDebt() < people[idx].getCredit()) {
             people[idx].subCredit(people[idx].getDebt());
+            people[idx].setDebt(0);
             cout << people[idx].getName() << "'s debt cancels out. They will not pay anyone. They still are owed $" << people[idx].getCredit() << ".\n";
         }
         else {
@@ -137,7 +140,52 @@ void settleDebts(vector<Person>& people) {
         }
     }
 
-    // Additional logic for settling remaining debts/credits can be implemented here
+    size_t j = 0;      // iterator from beginning of vector
+
+    for (size_t i = people.size(); i > 0; --i) {
+        size_t idx = i - 1;
+        while (people[idx].getCredit() != 0) {
+            if (people[j].getDebt() == 0) {
+                j++;
+                if (j >= people.size()) {
+                    break;
+                }
+                continue;
+            }
+            if (idx == j) {
+                if (people[j].getDebt() == 0) {
+                    j++;
+                    if (j >= people.size()) {
+                        break;
+                    }
+                    continue;
+                } else {
+                    cout << people[j].getName() << " will pay " << people[idx].getName() << " $" << people[j].getDebt() << endl;
+                    people[idx].subCredit(people[j].getDebt());
+                    people[j].setDebt(0);
+                    j++;
+                    break;
+                }
+            }
+            if (people[j].getDebt() < people[idx].getCredit()) {
+                cout << people[j].getName() << " will pay " << people[idx].getName() << " $" << people[j].getDebt() << endl;
+                people[idx].subCredit(people[j].getDebt());
+                people[j].setDebt(0);
+            } else if (people[j].getDebt() >= people[idx].getCredit()) {
+                cout << people[j].getName() << " will pay " << people[idx].getName() << " $" << people[idx].getCredit() << endl;
+                people[j].subDebt(people[idx].getCredit());
+                people[idx].setCredit(0);
+            }
+            if (people[j].getDebt() == 0 && j < people.size()) {
+                j++;
+            }
+        }
+        if (j >= people.size()) {
+            break;
+        }
+
+    }
+
 }
 
 void printPeople(const vector<Person>& people) {        // helper function for checking data
