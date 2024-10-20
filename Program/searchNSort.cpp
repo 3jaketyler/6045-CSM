@@ -16,11 +16,12 @@ int findName(vector<Person> &people, const string& name) {
 }
 
 // merge algorithm to merge two vectors
-void merge(vector<Person> & people, int left, int mid, int right) {
+void mergeByCredit(vector<Person> & people, int left, int mid, int right) {
     vector<Person> temp(right - left + 1);
 
     int i = left, j = mid + 1, k = 0;
 
+    // merges the two array sections together
     while (i <= mid && j <= right) {
         if (people[i].getCredit() <= people[j].getCredit()) {
             temp[k++] = people[i++];
@@ -29,16 +30,27 @@ void merge(vector<Person> & people, int left, int mid, int right) {
         }
     }
 
+    ///////////////////////////////////////////////
+    //                                           //
+    //      ONLY ONE OF THE FOLLOWING TWO        //
+    //            LOOPS WILL RUN                 //
+    //                                           // 
+    ///////////////////////////////////////////////
+
+    // adds the rest of the left half
     while (i <= mid) {
         temp[k++] = people[i++];
     }
 
+    // adds the rest of the right half
     while (j <= right) {
         temp[k++] = people[j++];
     }
 
+    // size of the temporary array
     int s = temp.size();
 
+    // starting from left point, copies the new values into original vector
     for (k = 0; k < s; k++) {
         people[left + k] = temp[k];
     }
@@ -46,12 +58,12 @@ void merge(vector<Person> & people, int left, int mid, int right) {
 }
 
 // merge sort to sort the vector of people
-void mergeSort(vector<Person> &people, int left, int right) {
+void mergeSortByCredit(vector<Person> &people, int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2;
 
-        mergeSort(people, left, mid);
-        mergeSort(people, mid + 1, right);
-        merge(people, left, mid, right);
+        mergeSortByCredit(people, left, mid);
+        mergeSortByCredit(people, mid + 1, right);
+        mergeByCredit(people, left, mid, right);
     }
 }

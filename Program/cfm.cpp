@@ -41,11 +41,9 @@ int main() {
 
     cout << "\nCalculating who should pay whom..." << endl;
 
-    mergeSort(people, 0, people.size() - 1);
-    printPeople(people);
+    mergeSortByCredit(people, 0, people.size() - 1);
 
-
-    //settleDebts(people);
+    settleDebts(people);
 
     return 0;
 }
