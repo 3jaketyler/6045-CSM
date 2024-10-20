@@ -19,5 +19,10 @@ $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ 
 
 clean:
+ifeq ($(OS),Windows_NT)
+	del /f $(OBJS) $(EXEC)
+else
 	rm -f $(OBJS) $(EXEC)
+endif
+
 

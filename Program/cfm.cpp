@@ -8,11 +8,23 @@
 
 using namespace std;
 
+//////////////////////////////////////////////
+//                                          //
+//     Function Forward Declarations        //
+//                                          //
+//////////////////////////////////////////////
 void welcomeMsg();                          // prints welcome message
 vector<Person> readData(string filename);   // get data from file
 void settleDebts(vector<Person>& people);   // calculates who should pay who
-int findName(const vector<Person>& people, const string& name);  // helper function to find a person by name
+void printPeople(const vector<Person>& people);
 
+
+
+//////////////////////////////////////////////
+//                                          //
+//             Main Function                //
+//                                          //
+//////////////////////////////////////////////
 int main() {
     welcomeMsg();
 
@@ -27,18 +39,27 @@ int main() {
         return 1;  // Exit the program if no data is found
     }
 
-    cout << "Calculating who should pay whom..." << endl;
+    cout << "\nCalculating who should pay whom..." << endl;
+
     settleDebts(people);
 
     return 0;
 }
 
+
+
+
+//////////////////////////////////////////////
+//                                          //
+//          Function Definitions            //
+//                                          //
+//////////////////////////////////////////////
 void welcomeMsg() {     // welcome message
     cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
-        << "+                                                  +\n"
-        << "+        Welcome to the Cash Flow Minimizer        +\n"
-        << "+                                                  +\n"
-        << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+         << "+                                                  +\n"
+         << "+        Welcome to the Cash Flow Minimizer        +\n"
+         << "+                                                  +\n"
+         << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 }
 
 vector<Person> readData(string filename) {      // reads data from file
@@ -93,15 +114,6 @@ vector<Person> readData(string filename) {      // reads data from file
     return people;
 }
 
-int findName(const vector<Person>& people, const string& name) {
-    for (size_t i = 0; i < people.size(); ++i) {  // Changed int to size_t to match the type of people.size()
-        if (people[i].getName() == name) {
-            return i;  // return the index of the person if found
-        }
-    }
-    return -1;  // return -1 if the person is not found
-}
-
 void settleDebts(vector<Person>& people) {
     // cancels out each person's debt and credit with themselves
     cout << "\nCancelling out everyone's debt and credit:\n";
@@ -124,4 +136,11 @@ void settleDebts(vector<Person>& people) {
     }
 
     // Additional logic for settling remaining debts/credits can be implemented here
+}
+
+void printPeople(const vector<Person>& people) {        // helper function for checking data
+    int s = people.size();
+    for (int i = 0; i < s; i++) {
+        cout << people[i].getName() << " " << people[i].getDebt() << " " << people[i].getCredit() << endl;
+    }
 }

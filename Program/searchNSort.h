@@ -5,4 +5,6 @@
 using namespace std;
 
 // linear search because vector of people is unsorted by name
-int findName(vector<Person> &people, string name);
+int findName(vector<Person> &people, const string& name);
+
+void mergeSort(vector<Person> &people, int left, int mid, int right);

@@ -5,7 +5,7 @@
 using namespace std;
 
 // linear search because vector of people is unsorted by name
-int findName(vector<Person> &people, string name) {
+int findName(vector<Person> &people, const string& name) {
     int s = people.size();
     for (int i = 0; i < s; i++) {
         if (people[i].getName() == name) {
@@ -13,4 +13,9 @@ int findName(vector<Person> &people, string name) {
         }
     }
     return -1;
+}
+
+// merge sort to sort the vector of people
+void mergeSort(vector<Person> &people, int left, int mid, int right) {
+    
 }
