@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <limits>
+#include <unordered_map>
 #include "person.h"
 #include "searchNSort.h"
 
@@ -66,13 +67,13 @@ void welcomeMsg() {     // welcome message
 }
 
 vector<Person> readData(string filename) {      // reads data from file
-    vector<Person> people;
+    vector<Person> peopleInitial;       // placeholder empty vector for error checking
 
     ifstream f(filename);     // opens file
 
     if (!f.is_open()) {   // error checking, returns empty vector if no data
         cout << "There was an error opening the file. Please try again\n";
-        return people;
+        return peopleInitial;
     }
 
     int numPeople, numDebts;
@@ -81,8 +82,10 @@ vector<Person> readData(string filename) {      // reads data from file
         cout << "Invalid input format on line 1. Please try again.\n";
         f.clear();               // Clear the error flags
         f.ignore(numeric_limits<streamsize>::max(), '\n');
-        return people;
+        return peopleInitial;
     }
+
+    unordered_map<string, Person> peopleMap;
 
     for (int i = 0; i < numDebts; i++) {
         string debtor, creditor;            // stores names of debtor and creditor
@@ -92,28 +95,27 @@ vector<Person> readData(string filename) {      // reads data from file
             cout << "Invalid input format on line " << i + 2 << ". Please try again.\n";
             f.clear();               // Clear the error flags
             f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            return people;
+            return peopleInitial;
         }
 
-        int dIndex = findName(people, debtor);      // searches vector for the debtor's index
-        int cIndex = findName(people, creditor);    // searches vector for the creditor's index
-
-        if (dIndex == -1) {         // adds new person to list
-            Person newPerson(debtor, debt, 0);
-            people.push_back(newPerson);
-        }
-        else {                    // modifies debt parameter for new debt
-            people[dIndex].addDebt(debt);
+        if (peopleMap.find(debtor) == peopleMap.end()) {
+            peopleMap[debtor] = Person(debtor, debt, 0);
+        } else {
+            peopleMap[debtor].addDebt(debt);
         }
 
-        if (cIndex == -1) {         // adds new person to list
-            Person newPerson(creditor, 0, debt);
-            people.push_back(newPerson);
-        }
-        else {                    // modifies credit parameter for new credit
-            people[cIndex].addCredit(debt);
+        if (peopleMap.find(creditor) == peopleMap.end()) {
+            peopleMap[creditor] = Person(creditor, 0, debt);
+        } else {
+            peopleMap[creditor].addCredit(debt);
         }
     }
+
+    vector<Person> people;
+    for (const auto& [name, person] : peopleMap) {
+        people.push_back(person);
+    }
+
     return people;
 }
 
