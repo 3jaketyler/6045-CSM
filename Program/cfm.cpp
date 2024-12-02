@@ -15,9 +15,14 @@ using namespace std;
 //                                          //
 //////////////////////////////////////////////
 void welcomeMsg();                          // prints welcome message
-vector<Person> readData(string filename);   // get data from file
+void instructionMsg();
+void aboutMsg();
+void choices();
+vector<Person> readData(string filename, vector<Person>& people);   // get data from file
+void balanceDebts(vector<Person>& people);
 void settleDebts(vector<Person>& people);   // calculates who should pay who
 void printPeople(const vector<Person>& people);
+vector<Person> addPeople(vector<Person>& people);
 
 
 
@@ -28,24 +33,52 @@ void printPeople(const vector<Person>& people);
 //////////////////////////////////////////////
 int main() {
     welcomeMsg();
+    aboutMsg();
+    instructionMsg();
 
-    string filename;
-    cout << "\nEnter the name of your data file: ";
-    cin >> filename;
+    vector<Person> people;
 
-    vector<Person> people = readData(filename);
+    char choice;
 
-    if (people.empty()) {
-        cout << "Failed to load data or no valid data found in file. Exiting program.\n";
-        return 1;  // Exit the program if no data is found
+    while (choice != 'x') {
+        choices();
+
+        string choiceString;
+        cin >> choiceString;
+        choice = tolower(choiceString[0]);
+
+        switch(choice) {
+            case 'a':
+                addPeople(people);
+                break;
+            case 'v':
+                aboutMsg();
+                break;
+            case 'i':
+                instructionMsg();
+                break;
+            case 'b':
+                balanceDebts(people);
+                break;
+            case 's':
+                settleDebts(people);
+                break;
+            case 't':
+                printPeople(people);
+                break;
+            case 'x':
+                cout << "Exiting... \n";
+                break;
+            default:
+                cout << "Please choose a valid menu option.\n";
+        }
     }
 
-    cout << "\nCalculating who should pay whom..." << endl;
+    
 
-    mergeSortByCredit(people, 0, people.size() - 1);
+    
 
-    settleDebts(people);
-    printPeople(people);
+    
 
     return 0;
 }
@@ -66,14 +99,62 @@ void welcomeMsg() {     // welcome message
          << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 }
 
-vector<Person> readData(string filename) {      // reads data from file
-    vector<Person> peopleInitial;       // placeholder empty vector for error checking
+void instructionMsg() {
+    cout << "\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
+         << "+                                                  +\n"
+         << "+         You will enter a file containing         +\n"
+         << "+                 debt information.                +\n"
+         << "+                                                  +\n"
+         << "+                   File Format                    +\n"
+         << "+                                                  +\n"
+         << "+ (number of people) (number of debts)             +\n"
+         << "+ (debt amount) (debtor name) (creditor name)      +\n"
+         << "+ (debt amount) (debtor name) (creditor name)      +\n"
+         << "+ (debt amount) (debtor name) (creditor name)      +\n"
+         << "+                                                  +\n"
+         << "+                   Example                        +\n"
+         << "+                                                  +\n"
+         << "+ 3 4                                              +\n"
+         << "+ 25.00 Alice Bob                                  +\n"
+         << "+ 30.00 Bob Charlie                                +\n"
+         << "+ 15.25 Charlie Alice                              +\n"
+         << "+ 7.89 Bob Alice                                   +\n"
+         << "+                                                  +\n"
+         << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n"; 
+}
 
+void aboutMsg() {
+    cout << "\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
+         << "+                                                  +\n"
+         << "+     This program will take the data provided     +\n"
+         << "+     about the debt between a group of people     +\n"
+         << "+     and determine an efficient way to settle     +\n"
+         << "+                  all of the debt                 +\n"
+         << "+                                                  +\n"
+         << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n"; 
+}
+
+void choices() {
+    cout << "\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
+         << "+                                                  \n"
+         << "+                   Menu Options:                  \n"
+         << "+ (a)dd people and debts                           \n"
+         << "+ (v)iew program information                       \n"
+         << "+ (i)nstructions for data format                   \n"
+         << "+ (b)alance each persons debt and credit           \n"
+         << "+ (s)ettle all debts between people                \n"
+         << "+ (t)otal debt and credit for each person          \n"
+         << "+ e(x)it the program                               \n"
+         << "+                                                  \n"
+         << "+ Enter your choice: "; 
+}
+
+vector<Person> readData(string filename, vector<Person>& people) {      // reads data from file
     ifstream f(filename);     // opens file
 
     if (!f.is_open()) {   // error checking, returns empty vector if no data
         cout << "There was an error opening the file. Please try again\n";
-        return peopleInitial;
+        return people;
     }
 
     int numPeople, numDebts;
@@ -82,10 +163,13 @@ vector<Person> readData(string filename) {      // reads data from file
         cout << "Invalid input format on line 1. Please try again.\n";
         f.clear();               // Clear the error flags
         f.ignore(numeric_limits<streamsize>::max(), '\n');
-        return peopleInitial;
+        return people;
     }
 
     unordered_map<string, Person> peopleMap;
+    for (const auto& person : people) {
+        peopleMap[person.getName()] = person;
+    }
 
     for (int i = 0; i < numDebts; i++) {
         string debtor, creditor;            // stores names of debtor and creditor
@@ -95,7 +179,7 @@ vector<Person> readData(string filename) {      // reads data from file
             cout << "Invalid input format on line " << i + 2 << ". Please try again.\n";
             f.clear();               // Clear the error flags
             f.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            return peopleInitial;
+            return people;
         }
 
         if (peopleMap.find(debtor) == peopleMap.end()) {
@@ -111,7 +195,7 @@ vector<Person> readData(string filename) {      // reads data from file
         }
     }
 
-    vector<Person> people;
+    people.clear();
     for (const auto& [name, person] : peopleMap) {
         people.push_back(person);
     }
@@ -119,7 +203,7 @@ vector<Person> readData(string filename) {      // reads data from file
     return people;
 }
 
-void settleDebts(vector<Person>& people) {
+void balanceDebts(vector<Person>& people) {
     // cancels out each person's debt and credit with themselves
     cout << "\nCancelling out everyone's debt and credit:\n";
     size_t s = people.size();  // Correct type
@@ -141,6 +225,10 @@ void settleDebts(vector<Person>& people) {
             people.erase(people.begin() + idx);  // Safely erase while iterating backward
         }
     }
+}
+
+void settleDebts(vector<Person>& people) {
+    
 
     size_t j = 0;      // iterator from beginning of vector
 
@@ -190,9 +278,26 @@ void settleDebts(vector<Person>& people) {
 
 }
 
-void printPeople(const vector<Person>& people) {        // helper function for checking data
+void printPeople(const vector<Person>& people) {        // function to print each person and their debt and credit
     int s = people.size();
     for (int i = 0; i < s; i++) {
-        cout << people[i].getName() << " " << people[i].getDebt() << " " << people[i].getCredit() << endl;
+        cout << people[i].getName() << "'s debt: " << people[i].getDebt() << endl 
+             << people[i].getName()  << "'s credit: " << people[i].getCredit() << endl;
     }
+}
+
+vector<Person> addPeople(vector<Person>& people) {
+    string filename;
+    cout << "\nEnter the name of your data file: ";
+    cin >> filename;
+
+    vector<Person> newPeople = readData(filename, people);
+
+    if (people.empty()) {
+        cout << "Failed to load data or no valid data found in file. Please try again.\n";
+    }
+
+    mergeSortByCredit(people, 0, people.size() - 1);
+
+    return newPeople;
 }
