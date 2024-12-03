@@ -4,10 +4,12 @@
 #include <fstream>
 #include <limits>
 #include <unordered_map>
+#include <chrono>
 #include "person.h"
 #include "searchNSort.h"
 
 using namespace std;
+using namespace std::chrono;
 
 //////////////////////////////////////////////
 //                                          //
@@ -150,6 +152,7 @@ void choices() {
 }
 
 vector<Person> readData(string filename, vector<Person>& people) {      // reads data from file
+    auto beg = high_resolution_clock::now();
     ifstream f(filename);     // opens file
 
     if (!f.is_open()) {   // error checking, returns empty vector if no data
@@ -200,10 +203,16 @@ vector<Person> readData(string filename, vector<Person>& people) {      // reads
         people.push_back(person);
     }
 
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - beg);
+
+    cout << "Adding " << numPeople << " people (" << numDebts << " debts) took " << duration.count() << " microseconds.\n";
+
     return people;
 }
 
 void balanceDebts(vector<Person>& people) {
+    auto beg = high_resolution_clock::now();
     // cancels out each person's debt and credit with themselves
     cout << "\nCancelling out everyone's debt and credit:\n";
     size_t s = people.size();  // Correct type
@@ -225,11 +234,15 @@ void balanceDebts(vector<Person>& people) {
             people.erase(people.begin() + idx);  // Safely erase while iterating backward
         }
     }
+
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - beg);
+
+    cout << "Balancing each persons debt and credit took " << duration.count() << " microseconds.\n";
 }
 
 void settleDebts(vector<Person>& people) {
-    
-
+    auto beg = high_resolution_clock::now();
     size_t j = 0;      // iterator from beginning of vector
 
     for (size_t i = people.size(); i > 0; --i) {
@@ -276,14 +289,24 @@ void settleDebts(vector<Person>& people) {
 
     }
 
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - beg);
+
+    cout << "Settling everyone's debt took " << duration.count() << " microseconds.\n";
+
 }
 
 void printPeople(const vector<Person>& people) {        // function to print each person and their debt and credit
+    auto beg = high_resolution_clock::now();
     int s = people.size();
     for (int i = 0; i < s; i++) {
         cout << people[i].getName() << "'s debt: " << people[i].getDebt() << endl 
              << people[i].getName()  << "'s credit: " << people[i].getCredit() << endl;
     }
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - beg);
+
+    cout << "Printing each persons debt and credit took " << duration.count() << " microseconds.\n";
 }
 
 vector<Person> addPeople(vector<Person>& people) {
@@ -297,7 +320,14 @@ vector<Person> addPeople(vector<Person>& people) {
         cout << "Failed to load data or no valid data found in file. Please try again.\n";
     }
 
+    auto beg = high_resolution_clock::now();
+
     mergeSortByCredit(people, 0, people.size() - 1);
+    
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - beg);
+
+    cout << "Merge sort took " << duration.count() << " microseconds.\n";
 
     return newPeople;
 }

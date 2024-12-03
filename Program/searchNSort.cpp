@@ -1,10 +1,12 @@
 #include <string>
+#include <iostream>
 #include <vector>
 #include "person.h"
 
 using namespace std;
 
 // linear search because vector of people is unsorted by name
+// out of date, not in use
 int findName(vector<Person> &people, const string& name) {
     int s = people.size();
     for (int i = 0; i < s; i++) {
