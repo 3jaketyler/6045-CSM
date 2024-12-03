@@ -244,6 +244,7 @@ void balanceDebts(vector<Person>& people) {
 void settleDebts(vector<Person>& people) {
     auto beg = high_resolution_clock::now();
     size_t j = 0;      // iterator from beginning of vector
+    int transactionCounter = 0;
 
     for (size_t i = people.size(); i > 0; --i) {
         size_t idx = i - 1;
@@ -264,6 +265,7 @@ void settleDebts(vector<Person>& people) {
                     continue;
                 } else {
                     cout << people[j].getName() << " will pay " << people[idx].getName() << " $" << people[j].getDebt() << endl;
+                    transactionCounter++;
                     people[idx].subCredit(people[j].getDebt());
                     people[j].setDebt(0);
                     j++;
@@ -272,10 +274,12 @@ void settleDebts(vector<Person>& people) {
             }
             if (people[j].getDebt() < people[idx].getCredit()) {
                 cout << people[j].getName() << " will pay " << people[idx].getName() << " $" << people[j].getDebt() << endl;
+                transactionCounter++;
                 people[idx].subCredit(people[j].getDebt());
                 people[j].setDebt(0);
             } else if (people[j].getDebt() >= people[idx].getCredit()) {
                 cout << people[j].getName() << " will pay " << people[idx].getName() << " $" << people[idx].getCredit() << endl;
+                transactionCounter++;
                 people[j].subDebt(people[idx].getCredit());
                 people[idx].setCredit(0);
             }
@@ -291,6 +295,8 @@ void settleDebts(vector<Person>& people) {
 
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - beg);
+
+    cout << transactionCounter << " transactions must occur." << endl;
 
     cout << "Settling everyone's debt took " << duration.count() << " microseconds.\n";
 
