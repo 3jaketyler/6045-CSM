@@ -26,7 +26,7 @@ void settleDebts(vector<Person>& people);   // calculates who should pay who
 void printPeople(const vector<Person>& people);
 void specialTesting(vector<Person>& people);
 vector<Person> emptyVector();
-vector<Person> addPeople(vector<Person>& people);
+vector<Person> addPeople(string filename, vector<Person>& people);
 string divider();
 
 
@@ -52,9 +52,13 @@ int main() {
         cin >> choiceString;
         choice = tolower(choiceString[0]);
 
+        string filename;
+
         switch(choice) {
             case 'a':
-                addPeople(people);
+                cout << "\nEnter the name of your data file: ";
+                cin >> filename;
+                people = addPeople(filename, people);
                 break;
             case 'v':
                 aboutMsg();
@@ -243,7 +247,15 @@ void balanceDebts(vector<Person>& people) {
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - beg);
 
-    cout << "Balancing each persons debt and credit took " << duration.count() << " microseconds.\n";
+    string filename = "times";
+    ofstream file;
+    file.open(filename, ios::app);
+    if (file.is_open()) {
+        file << "Balancing each persons debt and credit took " << duration.count() << " microseconds.\n";
+    } else {
+        cerr << "Times file failed\n";
+    }
+    file.close();
 }
 
 void settleDebts(vector<Person>& people) {
@@ -301,10 +313,16 @@ void settleDebts(vector<Person>& people) {
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - beg);
 
-    cout << transactionCounter << " transactions must occur." << endl;
-
-    cout << "Settling everyone's debt took " << duration.count() << " microseconds.\n";
-
+    string filename = "times";
+    ofstream file;
+    file.open(filename, ios::app);
+    if (file.is_open()) {
+        file << transactionCounter << " transactions must occur." << endl;
+        file << "Settling everyone's debt took " << duration.count() << " microseconds.\n";
+    } else {
+        cerr << "Times file failed\n";
+    }
+    file.close();
 }
 
 void printPeople(const vector<Person>& people) {        // function to print each person and their debt and credit
@@ -320,11 +338,7 @@ void printPeople(const vector<Person>& people) {        // function to print eac
     cout << "Printing each persons debt and credit took " << duration.count() << " microseconds.\n";
 }
 
-vector<Person> addPeople(vector<Person>& people) {
-    string filename;
-    cout << "\nEnter the name of your data file: ";
-    cin >> filename;
-
+vector<Person> addPeople(string filename, vector<Person>& people) {
     vector<Person> newPeople = readData(filename, people);
 
     if (people.empty()) {
@@ -338,7 +352,14 @@ vector<Person> addPeople(vector<Person>& people) {
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - beg);
 
-    cout << "Merge sort took " << duration.count() << " microseconds.\n";
+    string filename2 = "times";
+    ofstream file;
+    file.open(filename2, ios::app);
+    if (file.is_open()) {
+        file << "Merge sort took " << duration.count() << " microseconds.\n";
+    } else {
+        cerr << "Times file failed\n";
+    }
 
     return newPeople;
 }
@@ -351,35 +372,57 @@ vector<Person> emptyVector() {
 void specialTesting(vector<Person>& people) {
     int numCases;
     int numIterations;
+
     cout << "\nHow many test cases: ";
     cin >> numCases;
-    cout << endl << "\nHow many iterations: ";
+    cout << "\nHow many iterations: ";
     cin >> numIterations;
-    cout << endl;
 
-    string fileNames[numCases];
+    vector<string> fileNames(numCases);
 
     for (int i = 0; i < numCases; i++) {
-        cout << "\nEnter filename " << i + 1;
+        cout << "\nEnter filename " << i + 1 << ": ";
         cin >> fileNames[i];
     }
 
+    string filename = "times";
+    ofstream file;
+    file.open(filename, ios::app);
+    if (!file.is_open()) {
+        cerr << "Times file failed to open.\n";
+        return;
+    }
+
     for (int j = 0; j < numIterations; j++) {
+        cout << "\nIteration: " << j + 1 << endl;
+
         for (int i = 0; i < numCases; i++) {
-            cout << divider();
-            cout << endl << fileNames[i] << " with individual balancing: " << endl;
-            readData(fileNames[i], people);
+            cout << "Processing file: " << fileNames[i] << endl;
+
+            file << divider();
+            file << "\n" << fileNames[i] << " with individual balancing:\n";
+            file.flush();
+
+            addPeople(fileNames[i], people);
             balanceDebts(people);
             settleDebts(people);
-            people = emptyVector();
-            cout << divider();
-            cout << endl << fileNames[i] << " without individual balancing: " << endl;
-            readData(fileNames[i], people);
+            people.clear();
+            people.shrink_to_fit(); 
+
+            file << divider();
+            file << "\n" << fileNames[i] << " without individual balancing:\n";
+            file.flush();
+
+            addPeople(fileNames[i], people);
             settleDebts(people);
-            people = emptyVector();
+            people.clear();
+            people.shrink_to_fit(); 
         }
     }
+
+    file.close();
 }
+
 
 string divider() {
     return "\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
