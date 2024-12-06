@@ -24,7 +24,10 @@ vector<Person> readData(string filename, vector<Person>& people);   // get data 
 void balanceDebts(vector<Person>& people);
 void settleDebts(vector<Person>& people);   // calculates who should pay who
 void printPeople(const vector<Person>& people);
+void specialTesting(vector<Person>& people);
+vector<Person> emptyVector();
 vector<Person> addPeople(vector<Person>& people);
+string divider();
 
 
 
@@ -68,6 +71,12 @@ int main() {
             case 't':
                 printPeople(people);
                 break;
+            case 'p': 
+                specialTesting(people);
+                break;
+            case 'c':
+                people = emptyVector();
+                break;
             case 'x':
                 cout << "Exiting... \n";
                 break;
@@ -75,12 +84,6 @@ int main() {
                 cout << "Please choose a valid menu option.\n";
         }
     }
-
-    
-
-    
-
-    
 
     return 0;
 }
@@ -146,6 +149,8 @@ void choices() {
          << "+ (b)alance each persons debt and credit           \n"
          << "+ (s)ettle all debts between people                \n"
          << "+ (t)otal debt and credit for each person          \n"
+         << "+ s(p)ecial testing case                           \n"
+         << "+ (c)lear data                                     \n"
          << "+ e(x)it the program                               \n"
          << "+                                                  \n"
          << "+ Enter your choice: "; 
@@ -336,4 +341,46 @@ vector<Person> addPeople(vector<Person>& people) {
     cout << "Merge sort took " << duration.count() << " microseconds.\n";
 
     return newPeople;
+}
+
+vector<Person> emptyVector() {
+    vector<Person> clearedVector;
+    return clearedVector;
+}
+
+void specialTesting(vector<Person>& people) {
+    int numCases;
+    int numIterations;
+    cout << "\nHow many test cases: ";
+    cin >> numCases;
+    cout << endl << "\nHow many iterations: ";
+    cin >> numIterations;
+    cout << endl;
+
+    string fileNames[numCases];
+
+    for (int i = 0; i < numCases; i++) {
+        cout << "\nEnter filename " << i + 1;
+        cin >> fileNames[i];
+    }
+
+    for (int j = 0; j < numIterations; j++) {
+        for (int i = 0; i < numCases; i++) {
+            cout << divider();
+            cout << endl << fileNames[i] << " with individual balancing: " << endl;
+            readData(fileNames[i], people);
+            balanceDebts(people);
+            settleDebts(people);
+            people = emptyVector();
+            cout << divider();
+            cout << endl << fileNames[i] << " without individual balancing: " << endl;
+            readData(fileNames[i], people);
+            settleDebts(people);
+            people = emptyVector();
+        }
+    }
+}
+
+string divider() {
+    return "\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 }
