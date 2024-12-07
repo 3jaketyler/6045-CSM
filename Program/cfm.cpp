@@ -215,8 +215,15 @@ vector<Person> readData(string filename, vector<Person>& people) {      // reads
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - beg);
 
-    cout << "Adding " << numPeople << " people (" << numDebts << " debts) took " << duration.count() << " microseconds.\n";
-
+    string filename2 = "times";
+    ofstream file;
+    file.open(filename2, ios::app);
+    if (file.is_open()) {
+        file << "Adding " << numPeople << " people (" << numDebts << " debts) took " << duration.count() << " microseconds.\n";
+    } else {
+        cerr << "Times file failed\n";
+    }
+    file.close();
     return people;
 }
 
